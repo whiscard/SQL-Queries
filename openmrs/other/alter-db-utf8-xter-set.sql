@@ -1,0 +1,1 @@
+ALTER DATABASE openmrs_test5 CHARACTER SET utf8 COLLATE utf8_unicode_ci;
