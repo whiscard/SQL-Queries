@@ -3,12 +3,12 @@ SELECT
 	PatientDemographics.FirstName,
 	PatientDemographics.LastName,
   PatientDemographics.dateFirstSeen,
-  ObsOR1Procedure.OR1Procedure,
+  ObsOR1Procedure.OR1Procedure1,
   ObsPostOpDiagnosis.PostOpDiagnosis,
   EncDateOfOperation.DateOfOperation,
 	PatientDemographics.birthdate,
 	PatientDemographics.Gender,
-  ObsOR2Procedure.OR2Procedure,
+  ObsOR2Procedure.OR1Procedure2,
   PatientDemographics.clinicLocation,
   PatientDemographics.City,
   surg.operating_surgeon as surgeon,
@@ -44,7 +44,7 @@ GROUP BY visit.visit_id
 LEFT OUTER JOIN
 (
   SELECT
-	  group_concat(cname.name SEPARATOR ', ')  as OR1Procedure,
+    cname.name as OR1Procedure1,
     v.visit_id
   FROM obs obs
 	INNER JOIN encounter enc on obs.encounter_id = enc.encounter_id
@@ -53,9 +53,9 @@ LEFT OUTER JOIN
   AND cname.locale = "en"
 	AND cname.concept_name_type = "FULLY_SPECIFIED"
 	LEFT OUTER JOIN concept c ON cname.concept_id = c.concept_id
-  and c.uuid = '1651AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+  and c.uuid = 'c5029fad-bc7f-4678-83b9-5e3120e0ee0a'
   WHERE
-	  obs.concept_id IN (1651)
+	  obs.concept_id IN (164940)
     AND obs.voided = 0
   GROUP BY v.visit_id
 ) AS ObsOR1Procedure ON PatientDemographics.visit_id = ObsOR1Procedure.visit_id
@@ -92,8 +92,8 @@ LEFT OUTER JOIN
 ) AS EncDateOfOperation ON PatientDemographics.visit_id = EncDateOfOperation.visit_id
 LEFT OUTER JOIN
 (
-  SELECT
-	  group_concat(cname.name SEPARATOR ', ')  as OR2Procedure,
+   SELECT
+    cname.name as OR1Procedure2,
     v.visit_id
   FROM obs obs
 	INNER JOIN encounter enc on obs.encounter_id = enc.encounter_id
@@ -102,9 +102,9 @@ LEFT OUTER JOIN
   AND cname.locale = "en"
 	AND cname.concept_name_type = "FULLY_SPECIFIED"
 	LEFT OUTER JOIN concept c ON cname.concept_id = c.concept_id
-  and c.uuid = '1651AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+  and c.uuid = '560a5ef3-31d5-4d4a-9f38-163ef0d818e1'
   WHERE
-	  obs.concept_id IN (1651)
+	  obs.concept_id IN (164941)
     AND obs.voided = 0
   GROUP BY v.visit_id
 ) AS ObsOR2Procedure ON PatientDemographics.visit_id = ObsOR2Procedure.visit_id
@@ -169,6 +169,6 @@ LEFT OUTER JOIN
 ) AS ObsSpecialityofCase ON PatientDemographics.visit_id = ObsSpecialityofCase.visit_id
 
 WHERE
-	(CAST(EncDateOfOperation.DateOfOperation AS DATE) BETWEEN CAST( '2018-05-19' AS DATE) AND CAST( '2018-05-19' AS DATE))
+	(CAST(EncDateOfOperation.DateOfOperation AS DATE) BETWEEN CAST( '2018-05-19' AS DATE) AND CAST( '2018-05-29' AS DATE))
 GROUP BY PatientDemographics.visit_id
 ORDER BY EncDateOfOperation.DateOfOperation asc;
