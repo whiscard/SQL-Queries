@@ -183,7 +183,7 @@ SELECT
   EncDateOfOperation.DateOfOperation,
 	PatientDemographics.birthdate,
 	PatientDemographics.Gender,
-  ObsOR2Procedure.OR1Procedure2,
+  ObsOR2Procedure.OR2Procedure2,
   PatientDemographics.clinicLocation,
   PatientDemographics.City,
   surg.operating_surgeon as surgeon,
@@ -218,21 +218,37 @@ GROUP BY visit.visit_id
 ) AS PatientDemographics
 LEFT OUTER JOIN
 (
-  SELECT
-    cname.name as OR1Procedure1,
+select
+  ORProcedure1GroupID.name as OR1Procedure1,
+  ORProcedure1GroupID.visit_id
+from
+(
+  select
+    obsORProcedure1ConceptWithGroupID.value_coded,
+    obsORProcedure1ConceptWithGroupID.obs_group_id,
+    cname.name,
     v.visit_id
-  FROM obs obs
-	INNER JOIN encounter enc on obs.encounter_id = enc.encounter_id
-	INNER JOIN visit v on enc.visit_id = v.visit_id
-  LEFT OUTER JOIN concept_name cname ON obs.value_coded = cname.concept_id
-  AND cname.locale = "en"
-	AND cname.concept_name_type = "FULLY_SPECIFIED"
-	LEFT OUTER JOIN concept c ON cname.concept_id = c.concept_id
-  and c.uuid = 'c5029fad-bc7f-4678-83b9-5e3120e0ee0a'
-  WHERE
-	  obs.concept_id IN (164940)
-    AND obs.voided = 0
-  GROUP BY v.visit_id
+  from obs obsORProcedure1ConceptWithGroupID
+    inner join concept_name cname ON obsORProcedure1ConceptWithGroupID.value_coded = cname.concept_id
+    and cname.locale = "en"
+	  inner join concept c ON cname.concept_id = c.concept_id
+    inner join concept ORProcedure1Ans ON obsORProcedure1ConceptWithGroupID.concept_id = ORProcedure1Ans.concept_id
+    and ORProcedure1Ans.uuid = '1651AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+    inner join encounter enc on obsORProcedure1ConceptWithGroupID.encounter_id = enc.encounter_id
+	  inner join visit v on enc.visit_id = v.visit_id
+  where
+	  obsORProcedure1ConceptWithGroupID.voided = 0
+    and cname.concept_name_type = "FULLY_SPECIFIED"
+) ORProcedure1GroupID
+  inner join
+(
+  select obsORProcedure1obs.concept_id, obsORProcedure1obs.obs_id
+  from obs obsORProcedure1obs
+  inner join concept ORProcedure1Concept on obsORProcedure1obs.concept_id = ORProcedure1Concept.concept_id
+    and ORProcedure1Concept.uuid = 'd681e30a-c152-4dfb-a0f1-a967fc5ffcc5'
+  where
+    obsORProcedure1obs.voided = 0
+ ) ORProcedure1obsID on ORProcedure1GroupID.obs_group_id = ORProcedure1obsID.obs_id
 ) AS ObsOR1Procedure ON PatientDemographics.visit_id = ObsOR1Procedure.visit_id
 LEFT OUTER JOIN
 (
@@ -267,21 +283,37 @@ LEFT OUTER JOIN
 ) AS EncDateOfOperation ON PatientDemographics.visit_id = EncDateOfOperation.visit_id
 LEFT OUTER JOIN
 (
-   SELECT
-    cname.name as OR1Procedure2,
+select
+  ORProcedure2GroupID.name as OR2Procedure2,
+  ORProcedure2GroupID.visit_id
+from
+(
+  select
+    obsORProcedure2ConceptWithGroupID.value_coded,
+    obsORProcedure2ConceptWithGroupID.obs_group_id,
+    cname.name,
     v.visit_id
-  FROM obs obs
-	INNER JOIN encounter enc on obs.encounter_id = enc.encounter_id
-	INNER JOIN visit v on enc.visit_id = v.visit_id
-  LEFT OUTER JOIN concept_name cname ON obs.value_coded = cname.concept_id
-  AND cname.locale = "en"
-	AND cname.concept_name_type = "FULLY_SPECIFIED"
-	LEFT OUTER JOIN concept c ON cname.concept_id = c.concept_id
-  and c.uuid = '560a5ef3-31d5-4d4a-9f38-163ef0d818e1'
-  WHERE
-	  obs.concept_id IN (164941)
-    AND obs.voided = 0
-  GROUP BY v.visit_id
+  from obs obsORProcedure2ConceptWithGroupID
+    inner join concept_name cname ON obsORProcedure2ConceptWithGroupID.value_coded = cname.concept_id
+    and cname.locale = "en"
+	  inner join concept c ON cname.concept_id = c.concept_id
+    inner join concept ORProcedure2Ans ON obsORProcedure2ConceptWithGroupID.concept_id = ORProcedure2Ans.concept_id
+    and ORProcedure2Ans.uuid = '1651AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+    inner join encounter enc on obsORProcedure2ConceptWithGroupID.encounter_id = enc.encounter_id
+	  inner join visit v on enc.visit_id = v.visit_id
+  where
+	  obsORProcedure2ConceptWithGroupID.voided = 0
+    and cname.concept_name_type = "FULLY_SPECIFIED"
+) ORProcedure2GroupID
+  inner join
+(
+  select obsORProcedure2obs.concept_id, obsORProcedure2obs.obs_id
+  from obs obsORProcedure2obs
+  inner join concept ORProcedure2Concept on obsORProcedure2obs.concept_id = ORProcedure2Concept.concept_id
+    and ORProcedure2Concept.uuid = '5b149b13-4709-4f37-8f63-a183fd0c3511'
+  where
+    obsORProcedure2obs.voided = 0
+ ) ORProcedure2obsID on ORProcedure2GroupID.obs_group_id = ORProcedure2obsID.obs_id
 ) AS ObsOR2Procedure ON PatientDemographics.visit_id = ObsOR2Procedure.visit_id
 LEFT OUTER JOIN
 (
