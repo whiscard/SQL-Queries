@@ -1,4 +1,4 @@
-select ORProcedure1GroupID.name as OR1Procedure1
+select ORProcedure1GroupID.name as OR1Procedure
 from
 (
   select
@@ -29,7 +29,7 @@ from
  ) ORProcedure1obsID on ORProcedure1GroupID.obs_group_id = ORProcedure1obsID.obs_id;
 
 
-select ORProcedure2GroupID.name as OR2Procedure2
+select ORProcedure2GroupID.name as OR2Procedure
 from
 (
   select

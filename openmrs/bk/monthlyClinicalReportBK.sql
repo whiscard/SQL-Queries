@@ -178,12 +178,12 @@ SELECT
 	PatientDemographics.FirstName,
 	PatientDemographics.LastName,
   PatientDemographics.dateFirstSeen,
-  ObsOR1Procedure.OR1Procedure1,
+  ObsOR1Procedure.OR1Procedure,
   ObsPostOpDiagnosis.PostOpDiagnosis,
   EncDateOfOperation.DateOfOperation,
 	PatientDemographics.birthdate,
 	PatientDemographics.Gender,
-  ObsOR2Procedure.OR2Procedure2,
+  ObsOR2Procedure.OR2Procedure,
   PatientDemographics.clinicLocation,
   PatientDemographics.City,
   surg.operating_surgeon as surgeon,
@@ -219,7 +219,7 @@ GROUP BY visit.visit_id
 LEFT OUTER JOIN
 (
 select
-  ORProcedure1GroupID.name as OR1Procedure1,
+  ORProcedure1GroupID.name as OR1Procedure,
   ORProcedure1GroupID.visit_id
 from
 (
@@ -284,7 +284,7 @@ LEFT OUTER JOIN
 LEFT OUTER JOIN
 (
 select
-  ORProcedure2GroupID.name as OR2Procedure2,
+  ORProcedure2GroupID.name as OR2Procedure,
   ORProcedure2GroupID.visit_id
 from
 (
