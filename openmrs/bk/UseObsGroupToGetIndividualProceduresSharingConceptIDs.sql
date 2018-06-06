@@ -1,26 +1,32 @@
-select ORProcedure1.name
+select ORProcedure1GroupID.name as OR1Procedure1
 from
 (
-  select obsProcedure1.value_coded, obsProcedure1.obs_group_id, cname.name
-  from obs obsProcedure1
-  inner join concept_name cname ON obsProcedure1.value_coded = cname.concept_id
+  select
+    obsORProcedure1ConceptWithGroupID.value_coded,
+    obsORProcedure1ConceptWithGroupID.obs_group_id,
+    cname.name,
+    v.visit_id
+  from obs obsORProcedure1ConceptWithGroupID
+    inner join concept_name cname ON obsORProcedure1ConceptWithGroupID.value_coded = cname.concept_id
     and cname.locale = "en"
-	inner join concept c ON cname.concept_id = c.concept_id
-  inner join concept ORProcedure1Ans ON obsProcedure1.concept_id = ORProcedure1Ans.concept_id
+	  inner join concept c ON cname.concept_id = c.concept_id
+    inner join concept ORProcedure1Ans ON obsORProcedure1ConceptWithGroupID.concept_id = ORProcedure1Ans.concept_id
     and ORProcedure1Ans.uuid = '1651AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+    inner join encounter enc on obsORProcedure1ConceptWithGroupID.encounter_id = enc.encounter_id
+	  inner join visit v on enc.visit_id = v.visit_id
   where
-	  obsProcedure1.voided = 0
+	  obsORProcedure1ConceptWithGroupID.voided = 0
     and cname.concept_name_type = "FULLY_SPECIFIED"
-) ORProcedure1
+) ORProcedure1GroupID
   inner join
-  (
-  select obsOR1.concept_id, obsOR1.obs_id
-  from obs obsOR1
-  inner join concept ORProcedure1Concept on obsOR1.concept_id = ORProcedure1Concept.concept_id
+(
+  select obsORProcedure1obs.concept_id, obsORProcedure1obs.obs_id
+  from obs obsORProcedure1obs
+  inner join concept ORProcedure1Concept on obsORProcedure1obs.concept_id = ORProcedure1Concept.concept_id
     and ORProcedure1Concept.uuid = 'd681e30a-c152-4dfb-a0f1-a967fc5ffcc5'
   where
-    obsOR1.voided = 0
-  ) obsOR1Procedure1 on ORProcedure1.obs_group_id = obsOR1Procedure1.obs_id;
+    obsORProcedure1obs.voided = 0
+ ) ORProcedure1obsID on ORProcedure1GroupID.obs_group_id = ORProcedure1obsID.obs_id;
 
 
 select ORProcedure2.value_coded
