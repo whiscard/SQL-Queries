@@ -218,7 +218,7 @@ GROUP BY visit.visit_id
 ) AS PatientDemographics
 LEFT OUTER JOIN
 (
-select
+  select
   ORProcedure1GroupID.name as OR1Procedure,
   ORProcedure1GroupID.visit_id
 from
@@ -252,20 +252,19 @@ from
 ) AS ObsOR1Procedure ON PatientDemographics.visit_id = ObsOR1Procedure.visit_id
 LEFT OUTER JOIN
 (
-  SELECT
+SELECT
 	  cname.name as PostOpDiagnosis,
     v.visit_id
   FROM obs obs
 	INNER JOIN encounter enc on obs.encounter_id = enc.encounter_id
 	INNER JOIN visit v on enc.visit_id = v.visit_id
-  LEFT OUTER JOIN concept_name cname ON obs.value_coded = cname.concept_id
+  inner join concept_name cname ON obs.value_coded = cname.concept_id
   AND cname.locale = "en"
-	AND cname.concept_name_type = "FULLY_SPECIFIED"
-	LEFT OUTER JOIN concept c ON cname.concept_id = c.concept_id
-  and c.uuid = '163035AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+	inner join concept opDiagnosis ON obs.concept_id = opDiagnosis.concept_id
+  and opDiagnosis.uuid = '163035AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
   WHERE
-	  obs.concept_id IN (163035)
-    AND obs.voided = 0
+	  obs.voided = 0
+    AND cname.concept_name_type = "FULLY_SPECIFIED"
   GROUP BY v.visit_id
 ) AS ObsPostOpDiagnosis ON PatientDemographics.visit_id = ObsPostOpDiagnosis.visit_id
 LEFT OUTER JOIN
@@ -283,7 +282,7 @@ LEFT OUTER JOIN
 ) AS EncDateOfOperation ON PatientDemographics.visit_id = EncDateOfOperation.visit_id
 LEFT OUTER JOIN
 (
-select
+   select
   ORProcedure2GroupID.name as OR2Procedure,
   ORProcedure2GroupID.visit_id
 from
@@ -315,24 +314,6 @@ from
     obsORProcedure2obs.voided = 0
  ) ORProcedure2obsID on ORProcedure2GroupID.obs_group_id = ORProcedure2obsID.obs_id
 ) AS ObsOR2Procedure ON PatientDemographics.visit_id = ObsOR2Procedure.visit_id
-LEFT OUTER JOIN
-(
-  SELECT
-	  cname.name as PostOpDiagnosis,
-    v.visit_id
-  FROM obs obs
-	INNER JOIN encounter enc on obs.encounter_id = enc.encounter_id
-	INNER JOIN visit v on enc.visit_id = v.visit_id
-  LEFT OUTER JOIN concept_name cname ON obs.value_coded = cname.concept_id
-  AND cname.locale = "en"
-	AND cname.concept_name_type = "FULLY_SPECIFIED"
-	LEFT OUTER JOIN concept c ON cname.concept_id = c.concept_id
-  and c.uuid = '163035AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
-  WHERE
-	  obs.concept_id IN (163035)
-    AND obs.voided = 0
-  GROUP BY v.visit_id
-) AS ObsHDUStay ON PatientDemographics.visit_id = ObsHDUStay.visit_id
 left outer join (
 select
 o.patient, o.encounter_id,
@@ -358,19 +339,19 @@ group by o.encounter_id
 ) surg on surg.encounter_id = EncDateOfOperation.encounter_id
 LEFT OUTER JOIN
 (
-  SELECT
+SELECT
 	  cname.name as SpecialityofCase,
     v.visit_id
   FROM obs obs
 	INNER JOIN encounter enc on obs.encounter_id = enc.encounter_id
 	INNER JOIN visit v on enc.visit_id = v.visit_id
-  LEFT OUTER JOIN concept_name cname ON obs.value_coded = cname.concept_id
+  inner join concept_name cname ON obs.value_coded = cname.concept_id
   AND cname.locale = "en"
-	AND cname.concept_name_type = "FULLY_SPECIFIED"
-	LEFT OUTER JOIN concept c ON cname.concept_id = c.concept_id
-  and c.uuid = '161630AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+	inner join concept c ON cname.concept_id = c.concept_id
+  inner join concept specialityCase on obs.concept_id = specialityCase.concept_id
+  and specialityCase.uuid = '161630AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
   WHERE
-	  obs.concept_id IN (161630)
+    cname.concept_name_type = "FULLY_SPECIFIED"
     AND obs.voided = 0
   GROUP BY v.visit_id
 ) AS ObsSpecialityofCase ON PatientDemographics.visit_id = ObsSpecialityofCase.visit_id
