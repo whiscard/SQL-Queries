@@ -89,3 +89,59 @@ from
   where
     obsORProcedure3obs.voided = 0
  ) ORProcedure3obsID on ORProcedure3GroupID.obs_group_id = ORProcedure3obsID.obs_id;
+
+select
+  SurgeonNameGroupID.value_text as OperatingSurgeon,
+  SurgeonNameGroupID.visit_id
+from
+(
+  select
+    obsSurgeonNameConceptWithGroupID.value_text,
+    obsSurgeonNameConceptWithGroupID.obs_group_id,
+    v.visit_id
+  from obs obsSurgeonNameConceptWithGroupID
+    inner join concept SurgeonName ON obsSurgeonNameConceptWithGroupID.concept_id = SurgeonName.concept_id
+    and SurgeonName.uuid = '1473AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+    inner join encounter enc on obsSurgeonNameConceptWithGroupID.encounter_id = enc.encounter_id
+	  inner join visit v on enc.visit_id = v.visit_id
+  where
+	  obsSurgeonNameConceptWithGroupID.voided = 0
+) SurgeonNameGroupID
+  inner join
+(
+  select obsSurgeonName.concept_id, obsSurgeonName.obs_id
+  from obs obsSurgeonName
+  inner join concept SurgeonNameConcept on obsSurgeonName.concept_id = SurgeonNameConcept.concept_id
+    and SurgeonNameConcept.uuid = '164919AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+  where
+    obsSurgeonName.voided = 0
+ ) SurgeonNameobsID on SurgeonNameGroupID.obs_group_id = SurgeonNameobsID.obs_id;
+
+
+
+select
+  AssistantSurgeonNameGroupID.value_text as AssistantSurgeon,
+  AssistantSurgeonNameGroupID.visit_id
+from
+(
+  select
+    obsAssistantSurgeonNameConceptWithGroupID.value_text,
+    obsAssistantSurgeonNameConceptWithGroupID.obs_group_id,
+    v.visit_id
+  from obs obsAssistantSurgeonNameConceptWithGroupID
+    inner join concept AssistantSurgeonName ON obsAssistantSurgeonNameConceptWithGroupID.concept_id = AssistantSurgeonName.concept_id
+    and AssistantSurgeonName.uuid = '1473AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+    inner join encounter enc on obsAssistantSurgeonNameConceptWithGroupID.encounter_id = enc.encounter_id
+	  inner join visit v on enc.visit_id = v.visit_id
+  where
+	  obsAssistantSurgeonNameConceptWithGroupID.voided = 0
+) AssistantSurgeonNameGroupID
+  inner join
+(
+  select obsAssistantSurgeonName.concept_id, obsAssistantSurgeonName.obs_id
+  from obs obsAssistantSurgeonName
+  inner join concept AssistantSurgeonNameConcept on obsAssistantSurgeonName.concept_id = AssistantSurgeonNameConcept.concept_id
+    and AssistantSurgeonNameConcept.uuid = '269879d8-c629-4c27-b87c-0c341bd80c66'
+  where
+    obsAssistantSurgeonName.voided = 0
+ ) AssistantSurgeonNameobsID on AssistantSurgeonNameGroupID.obs_group_id = AssistantSurgeonNameobsID.obs_id;
